@@ -1,3 +1,4 @@
+use regex::Regex;
 use scraper::{Html, Selector};
 
 pub struct Scraper {
@@ -11,7 +12,11 @@ impl Scraper {
         }
     }
 
-    fn get_times_list(self) -> Vec<String> {
+    pub fn get_times(&self) -> Vec<(String, u32)> {
+        Self::get_times_from_list(self.get_times_list())
+    }
+
+    fn get_times_list(&self) -> Vec<String> {
         if let Ok(request) = reqwest::blocking::get(self.url) {
             if let Ok(text) = request.text() {
                 let document = Html::parse_document(&text);
@@ -30,13 +35,28 @@ impl Scraper {
 
         vec![]
     }
+
+    fn get_times_from_list(times_list: Vec<String>) -> Vec<(String, u32)> {
+        let re = Regex::new(r"^(.+ at .+)[\t]{8}\((\d+) spots available\)").unwrap();
+        times_list
+            .iter()
+            .map(|x| {
+                let cap = re.captures(&x).unwrap();
+                (
+                    String::from(cap.get(1).unwrap().as_str()),
+                    cap.get(2).unwrap().as_str().parse::<u32>().unwrap(),
+                )
+            })
+            .collect()
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn it_works() {
-        println!("{:?}", Scraper::new().get_times_list());
+    fn manual_test() {
+        let s = Scraper::new();
+        println!("{:#?}", s.get_times());
     }
 }
