@@ -1,5 +1,6 @@
 use regex::Regex;
 use scraper::{Html, Selector};
+use std::collections::HashMap;
 
 pub struct Scraper {
     url: &'static str,
@@ -12,7 +13,7 @@ impl Scraper {
         }
     }
 
-    pub fn get_times(&self) -> Vec<(String, u32)> {
+    pub fn get_times(&self) -> HashMap<String, u32> {
         Self::get_times_from_list(self.get_times_list())
     }
 
@@ -36,7 +37,7 @@ impl Scraper {
         vec![]
     }
 
-    fn get_times_from_list(times_list: Vec<String>) -> Vec<(String, u32)> {
+    fn get_times_from_list(times_list: Vec<String>) -> HashMap<String, u32> {
         let re = Regex::new(r"^(.+ at .+)[\t]{8}\((\d+) spots available\)").unwrap();
         times_list
             .iter()
@@ -48,6 +49,12 @@ impl Scraper {
                 )
             })
             .collect()
+    }
+}
+
+impl Default for Scraper {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
