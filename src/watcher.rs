@@ -20,7 +20,8 @@ impl Watcher {
     pub fn new(notifier: Notifier, numbers: Vec<String>) -> Self {
         let mut content = String::new();
         if let Ok(mut file) = OpenOptions::new().read(true).open(Self::DATA_FILE) {
-            file.read_to_string(&mut content).unwrap();
+            file.read_to_string(&mut content)
+                .expect("Failed to read data file content");
         }
 
         Watcher {
@@ -47,13 +48,13 @@ impl Watcher {
                     .write(true)
                     .create(true)
                     .open(Path::new(Self::DATA_FILE))
-                    .unwrap()
+                    .expect("Could not open data file for write")
                     .write_all(
                         serde_json::to_string(&self.spots)
                             .unwrap_or_default()
                             .as_bytes(),
                     )
-                    .unwrap();
+                    .expect("Could not write content to data file");
 
                 break;
             }

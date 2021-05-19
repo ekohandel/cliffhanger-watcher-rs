@@ -38,7 +38,8 @@ impl Scraper {
     }
 
     fn get_times_from_list(times_list: Vec<String>) -> HashMap<String, u32> {
-        let re = Regex::new(r"^(.+ at .+)[\t]{8}\((\d+) spots available\)").unwrap();
+        let re = Regex::new(r"^(.+ at .+)[\t]{8}\((\d+) spots available\)")
+            .expect("Could not create regex");
         times_list
             .iter()
             .map(|x| {

@@ -4,12 +4,17 @@ use std::{env, thread, time};
 use tokio::runtime::Runtime;
 
 fn main() {
-    let mut watcher = Watcher::new(Notifier::new(), vec![String::from("+14034797856")]);
+    let numbers: Vec<String> = env::var("CLIFFHANGER_WATCHER_NUMBERS")
+        .expect("Did not find CLIFFHANGER_WATCHER_NUMBERS environment variable")
+        .split(';')
+        .map(String::from)
+        .collect();
+    let mut watcher = Watcher::new(Notifier::new(), numbers);
     let update_interval = time::Duration::from_secs(
         env::var("CLIFFHANGER_WATCHER_UPDATE_INTERVAL")
-            .unwrap_or_default()
+            .expect("Did not find CLIFFHANGER_WATCHER_UPDATE_INTERVAL environment variable")
             .parse()
-            .unwrap(),
+            .expect("Could not parse CLIFFHANGER_WATCHER_UPDATE_INTERVAL"),
     );
 
     loop {

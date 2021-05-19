@@ -9,9 +9,12 @@ pub struct Notifier {
 impl Notifier {
     pub fn new() -> Self {
         Notifier {
-            from_number: env::var("TWILIO_NUMBER").unwrap(),
-            account_sid: env::var("TWILIO_ACCOUNT_SID").unwrap(),
-            auth_token: env::var("TWILIO_AUTH_TOKEN").unwrap(),
+            from_number: env::var("TWILIO_NUMBER")
+                .expect("Could not find TWILIO_NUMBER environment variable"),
+            account_sid: env::var("TWILIO_ACCOUNT_SID")
+                .expect("Could not find TWILIO_ACCOUNT_SID environment variable"),
+            auth_token: env::var("TWILIO_AUTH_TOKEN")
+                .expect("Could not find TWILIO_AUTH_TOKEN environment variable"),
         }
     }
 
